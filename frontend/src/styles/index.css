@@ -1,0 +1,139 @@
+@import url('https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400;500;600;700&family=Poppins:wght@400;500;600;700;800&family=Playfair+Display:wght@400;500;600;700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    @apply bg-gradient-to-br from-primary-900 via-primary-800 to-primary-700 min-h-screen text-white font-sans;
+  }
+
+  * {
+    @apply antialiased;
+  }
+}
+
+@layer components {
+  /* Glassmorphism effect */
+  .glass {
+    @apply bg-white/10 backdrop-blur-md border border-white/20;
+  }
+
+  .glass-strong {
+    @apply bg-white/20 backdrop-blur-lg border border-white/30;
+  }
+
+  /* Card styles */
+  .card {
+    @apply glass rounded-xl p-6 shadow-lg hover:shadow-xl transition-all duration-300;
+  }
+
+  .card-interactive {
+    @apply card hover:scale-[1.02] hover:bg-white/15 cursor-pointer;
+  }
+
+  /* Button styles */
+  .btn {
+    @apply px-6 py-3 rounded-lg font-medium transition-all duration-300 shadow-md hover:shadow-lg;
+  }
+
+  .btn-primary {
+    @apply btn bg-accent-gold text-primary-900 hover:bg-accent-gold/90 hover:scale-105;
+  }
+
+  .btn-secondary {
+    @apply btn glass hover:bg-white/20;
+  }
+
+  /* Badge styles */
+  .badge-bronze {
+    @apply bg-gradient-to-br from-amber-700 to-amber-900 text-white;
+  }
+
+  .badge-silver {
+    @apply bg-gradient-to-br from-slate-300 to-slate-500 text-slate-900;
+  }
+
+  .badge-gold {
+    @apply bg-gradient-to-br from-yellow-400 to-yellow-600 text-yellow-900;
+  }
+
+  /* Rarity colors */
+  .rarity-common {
+    @apply border-gray-400 bg-gray-400/10;
+  }
+
+  .rarity-rare {
+    @apply border-blue-400 bg-blue-400/10;
+  }
+
+  .rarity-epic {
+    @apply border-purple-400 bg-purple-400/10;
+  }
+
+  .rarity-legendary {
+    @apply border-yellow-400 bg-yellow-400/10 animate-glow;
+  }
+
+  /* Attribute colors */
+  .attr-growth {
+    @apply text-attribute-growth;
+  }
+
+  .attr-swift {
+    @apply text-attribute-swift;
+  }
+
+  .attr-courage {
+    @apply text-attribute-courage;
+  }
+
+  .attr-respect {
+    @apply text-attribute-respect;
+  }
+
+  .attr-innovation {
+    @apply text-attribute-innovation;
+  }
+
+  /* Progress bars */
+  .progress-bar {
+    @apply w-full h-2 bg-white/20 rounded-full overflow-hidden;
+  }
+
+  .progress-fill {
+    @apply h-full bg-gradient-to-r from-accent-gold to-yellow-500 transition-all duration-500 ease-out;
+  }
+
+  /* Scrollbar styles */
+  .custom-scrollbar::-webkit-scrollbar {
+    @apply w-2;
+  }
+
+  .custom-scrollbar::-webkit-scrollbar-track {
+    @apply bg-white/10 rounded-full;
+  }
+
+  .custom-scrollbar::-webkit-scrollbar-thumb {
+    @apply bg-accent-gold/50 rounded-full hover:bg-accent-gold/70;
+  }
+}
+
+@layer utilities {
+  .text-shadow {
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+  }
+
+  .text-shadow-lg {
+    text-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
+  }
+
+  .glow-gold {
+    box-shadow: 0 0 20px rgba(201, 169, 97, 0.5);
+  }
+
+  .glow-gold-strong {
+    box-shadow: 0 0 30px rgba(201, 169, 97, 0.8);
+  }
+}
