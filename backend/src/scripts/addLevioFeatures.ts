@@ -265,10 +265,29 @@ async function addLevioFeatures() {
     // ==================== ADD COINS TO USERS ====================
     console.log('💰 Adding coins column to users table...');
 
-    await connection.query(`
-      ALTER TABLE users
-      ADD COLUMN IF NOT EXISTS coins INT DEFAULT 0 AFTER xp
+    // Check if xp column exists, if not add both xp and coins
+    const [columns] = await connection.query(`
+      SELECT COLUMN_NAME
+      FROM INFORMATION_SCHEMA.COLUMNS
+      WHERE TABLE_SCHEMA = DATABASE()
+      AND TABLE_NAME = 'users'
+      AND COLUMN_NAME = 'xp'
     `);
+
+    if ((columns as any[]).length === 0) {
+      // xp doesn't exist, add both xp and coins
+      await connection.query(`
+        ALTER TABLE users
+        ADD COLUMN xp INT DEFAULT 0,
+        ADD COLUMN coins INT DEFAULT 0
+      `);
+    } else {
+      // xp exists, just add coins
+      await connection.query(`
+        ALTER TABLE users
+        ADD COLUMN IF NOT EXISTS coins INT DEFAULT 0 AFTER xp
+      `);
+    }
 
     console.log('✅ All tables created successfully!\n');
 

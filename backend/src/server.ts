@@ -18,6 +18,11 @@ import mountainRoutes from './routes/mountainRoutes.js';
 import cardRoutes from './routes/cardRoutes.js';
 import badgeRoutes from './routes/badgeRoutes.js';
 import cultureQuestRoutes from './routes/cultureQuestRoutes.js';
+import lessonRoutes from './routes/lessonRoutes.js';
+import missionRoutes from './routes/missionRoutes.js';
+import socialRoutes from './routes/socialRoutes.js';
+import rewardRoutes from './routes/rewardRoutes.js';
+import notificationRoutes from './routes/notificationRoutes.js';
 
 // Import middleware
 import { errorHandler } from './middleware/errorHandler.js';
@@ -43,6 +48,11 @@ app.use('/api/mountains', mountainRoutes);
 app.use('/api/cards', cardRoutes);
 app.use('/api/badges', badgeRoutes);
 app.use('/api/culture-quest', cultureQuestRoutes);
+app.use('/api/lessons', lessonRoutes);
+app.use('/api/missions', missionRoutes);
+app.use('/api/social', socialRoutes);
+app.use('/api/rewards', rewardRoutes);
+app.use('/api/notifications', notificationRoutes);
 
 // Health check
 app.get('/health', (req, res) => {
