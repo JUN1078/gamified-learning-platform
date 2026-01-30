@@ -3,65 +3,29 @@ import dotenv from 'dotenv';
 
 dotenv.config();
 
-// Parse DATABASE_URL if provided, otherwise fall back to individual variables
-let poolConfig: any;
+// Railway automatically shares MySQL service variables with connected services
+// Use individual variables (more reliable than parsing URL)
+console.log('🔧 Database Configuration:');
+console.log('  Strategy: Using individual environment variables');
+console.log('  MYSQLHOST:', process.env.MYSQLHOST || 'not set');
+console.log('  MYSQLPORT:', process.env.MYSQLPORT || 'not set');
+console.log('  MYSQLUSER:', process.env.MYSQLUSER || 'not set');
+console.log('  MYSQLDATABASE:', process.env.MYSQLDATABASE || 'not set');
+console.log('  MYSQLPASSWORD:', process.env.MYSQLPASSWORD ? 'set (length: ' + process.env.MYSQLPASSWORD.length + ')' : 'not set');
 
-// Railway MySQL provides both MYSQL_URL and individual variables
-// Try MYSQL_URL first, then DATABASE_URL, then individual variables
-const mysqlUrl = process.env.MYSQL_URL || process.env.DATABASE_URL;
-
-if (mysqlUrl) {
-  try {
-    // Parse the MySQL connection URL
-    const dbUrl = new URL(mysqlUrl);
-
-    console.log('🔧 Database Configuration:');
-    console.log('  Using:', process.env.MYSQL_URL ? 'MYSQL_URL' : 'DATABASE_URL');
-    console.log('  Host:', dbUrl.hostname);
-    console.log('  Port:', dbUrl.port || 3306);
-    console.log('  User:', dbUrl.username);
-    console.log('  Database:', dbUrl.pathname.slice(1));
-    console.log('  Password provided:', !!dbUrl.password);
-    console.log('  Password length:', dbUrl.password?.length || 0);
-
-    poolConfig = {
-      host: dbUrl.hostname,
-      port: parseInt(dbUrl.port) || 3306,
-      user: dbUrl.username,
-      password: dbUrl.password, // No need to decode - mysql2 handles it
-      database: dbUrl.pathname.slice(1),
-      waitForConnections: true,
-      connectionLimit: 10,
-      queueLimit: 0,
-      enableKeepAlive: true,
-      keepAliveInitialDelay: 0,
-      connectTimeout: 10000,
-    };
-  } catch (error: any) {
-    console.error('❌ Error parsing database URL:', error.message);
-    console.log('Falling back to individual environment variables');
-    poolConfig = buildConfigFromEnvVars();
-  }
-} else {
-  console.log('🔧 Using individual environment variables');
-  poolConfig = buildConfigFromEnvVars();
-}
-
-function buildConfigFromEnvVars() {
-  return {
-    host: process.env.MYSQLHOST || process.env.DB_HOST || 'localhost',
-    port: parseInt(process.env.MYSQLPORT || process.env.DB_PORT || '3306'),
-    user: process.env.MYSQLUSER || process.env.DB_USER || 'root',
-    password: process.env.MYSQLPASSWORD || process.env.DB_PASSWORD || '',
-    database: process.env.MYSQLDATABASE || process.env.DB_NAME || 'learnhub_gamification',
-    waitForConnections: true,
-    connectionLimit: 10,
-    queueLimit: 0,
-    enableKeepAlive: true,
-    keepAliveInitialDelay: 0,
-    connectTimeout: 10000,
-  };
-}
+const poolConfig = {
+  host: process.env.MYSQLHOST || process.env.DB_HOST || 'localhost',
+  port: parseInt(process.env.MYSQLPORT || process.env.DB_PORT || '3306'),
+  user: process.env.MYSQLUSER || process.env.DB_USER || 'root',
+  password: process.env.MYSQLPASSWORD || process.env.DB_PASSWORD || '',
+  database: process.env.MYSQLDATABASE || process.env.DB_NAME || 'railway',
+  waitForConnections: true,
+  connectionLimit: 10,
+  queueLimit: 0,
+  enableKeepAlive: true,
+  keepAliveInitialDelay: 0,
+  connectTimeout: 10000,
+};
 
 // Create connection pool
 export const pool = mysql.createPool(poolConfig);
