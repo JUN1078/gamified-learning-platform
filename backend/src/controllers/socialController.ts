@@ -57,6 +57,14 @@ export const createPost = async (req: Request, res: Response) => {
     const userId = req.user?.userId;
     const { postType, content, mediaUrl, relatedLessonId } = req.body;
 
+    if (!userId) {
+      await connection.rollback();
+      return res.status(401).json({
+        success: false,
+        message: 'User not authenticated'
+      });
+    }
+
     if (!content || content.trim().length === 0) {
       await connection.rollback();
       return res.status(400).json({

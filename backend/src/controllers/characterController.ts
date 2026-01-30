@@ -1,15 +1,20 @@
-import { Response } from 'express';
-import Character from '../models/Character.js';
-import { AuthRequest } from '../middleware/auth.js';
+import { Request, Response } from 'express';
+import { pool } from '../config/database.js';
+import { RowDataPacket, ResultSetHeader } from 'mysql2';
 
 // @desc    Get character attributes
 // @route   GET /api/character/attributes
 // @access  Private
-export const getCharacter = async (req: AuthRequest, res: Response) => {
+export const getCharacter = async (req: Request, res: Response) => {
   try {
-    const character = await Character.findOne({ userId: req.user._id });
+    const userId = req.user?.userId;
 
-    if (!character) {
+    const [characters] = await pool.query<RowDataPacket[]>(
+      'SELECT * FROM characters WHERE user_id = ?',
+      [userId]
+    );
+
+    if (characters.length === 0) {
       return res.status(404).json({
         success: false,
         error: 'Character not found',
@@ -18,7 +23,7 @@ export const getCharacter = async (req: AuthRequest, res: Response) => {
 
     res.json({
       success: true,
-      data: character,
+      data: characters[0],
     });
   } catch (error: any) {
     res.status(500).json({
@@ -31,31 +36,52 @@ export const getCharacter = async (req: AuthRequest, res: Response) => {
 // @desc    Update character attributes
 // @route   PUT /api/character/attributes
 // @access  Private
-export const updateAttributes = async (req: AuthRequest, res: Response) => {
+export const updateAttributes = async (req: Request, res: Response) => {
   try {
-    const { attributes } = req.body;
+    const userId = req.user?.userId;
+    const attributes = req.body;
 
-    const character = await Character.findOne({ userId: req.user._id });
+    // Build the SET clause dynamically for the attributes
+    const allowedAttributes = [
+      'agility', 'resilience', 'innovation', 'social_intelligence', 'empowerment',
+      'analytical_thinking', 'creativity', 'emotional_intelligence', 'leadership',
+      'communication', 'adaptability', 'strategic_thinking'
+    ];
 
-    if (!character) {
-      return res.status(404).json({
-        success: false,
-        error: 'Character not found',
-      });
-    }
+    const updates: string[] = [];
+    const values: any[] = [];
 
-    // Update attributes
     Object.keys(attributes).forEach((key) => {
-      if (character.attributes[key as keyof typeof character.attributes] !== undefined) {
-        character.attributes[key as keyof typeof character.attributes] = attributes[key];
+      const snakeKey = key.replace(/([A-Z])/g, '_$1').toLowerCase();
+      if (allowedAttributes.includes(snakeKey)) {
+        updates.push(`${snakeKey} = ?`);
+        values.push(attributes[key]);
       }
     });
 
-    await character.save();
+    if (updates.length === 0) {
+      return res.status(400).json({
+        success: false,
+        error: 'No valid attributes to update'
+      });
+    }
+
+    values.push(userId);
+
+    await pool.query(
+      `UPDATE characters SET ${updates.join(', ')} WHERE user_id = ?`,
+      values
+    );
+
+    // Get updated character
+    const [characters] = await pool.query<RowDataPacket[]>(
+      'SELECT * FROM characters WHERE user_id = ?',
+      [userId]
+    );
 
     res.json({
       success: true,
-      data: character,
+      data: characters[0],
     });
   } catch (error: any) {
     res.status(500).json({
@@ -68,20 +94,25 @@ export const updateAttributes = async (req: AuthRequest, res: Response) => {
 // @desc    Get avatar
 // @route   GET /api/character/avatar
 // @access  Private
-export const getAvatar = async (req: AuthRequest, res: Response) => {
+export const getAvatar = async (req: Request, res: Response) => {
   try {
-    const character = await Character.findOne({ userId: req.user._id });
+    const userId = req.user?.userId;
 
-    if (!character) {
+    const [users] = await pool.query<RowDataPacket[]>(
+      'SELECT avatar_url FROM users WHERE id = ?',
+      [userId]
+    );
+
+    if (users.length === 0) {
       return res.status(404).json({
         success: false,
-        error: 'Character not found',
+        error: 'User not found',
       });
     }
 
     res.json({
       success: true,
-      data: character.avatar,
+      data: { avatar_url: users[0].avatar_url },
     });
   } catch (error: any) {
     res.status(500).json({
@@ -94,24 +125,19 @@ export const getAvatar = async (req: AuthRequest, res: Response) => {
 // @desc    Update avatar
 // @route   PUT /api/character/avatar
 // @access  Private
-export const updateAvatar = async (req: AuthRequest, res: Response) => {
+export const updateAvatar = async (req: Request, res: Response) => {
   try {
-    const character = await Character.findOne({ userId: req.user._id });
+    const userId = req.user?.userId;
+    const { avatar_url } = req.body;
 
-    if (!character) {
-      return res.status(404).json({
-        success: false,
-        error: 'Character not found',
-      });
-    }
-
-    // Update avatar fields
-    Object.assign(character.avatar, req.body);
-    await character.save();
+    await pool.query(
+      'UPDATE users SET avatar_url = ? WHERE id = ?',
+      [avatar_url, userId]
+    );
 
     res.json({
       success: true,
-      data: character.avatar,
+      data: { avatar_url },
     });
   } catch (error: any) {
     res.status(500).json({
@@ -124,28 +150,53 @@ export const updateAvatar = async (req: AuthRequest, res: Response) => {
 // @desc    Add XP to character
 // @route   POST /api/character/xp
 // @access  Private
-export const addXP = async (req: AuthRequest, res: Response) => {
+export const addXP = async (req: Request, res: Response) => {
   try {
+    const userId = req.user?.userId;
     const { amount } = req.body;
 
-    const character = await Character.findOne({ userId: req.user._id });
+    // Get current character
+    const [characters] = await pool.query<RowDataPacket[]>(
+      'SELECT * FROM characters WHERE user_id = ?',
+      [userId]
+    );
 
-    if (!character) {
+    if (characters.length === 0) {
       return res.status(404).json({
         success: false,
         error: 'Character not found',
       });
     }
 
-    character.xp += amount;
-    (character as any).calculateLevel();
-    (character as any).updateTitle();
+    const character = characters[0];
+    const newXP = character.xp + amount;
 
-    await character.save();
+    // Calculate new level (100 XP per level)
+    const newLevel = Math.floor(newXP / 100) + 1;
+
+    // Determine title based on level
+    let newTitle = 'Novice';
+    if (newLevel >= 50) newTitle = 'Grandmaster';
+    else if (newLevel >= 40) newTitle = 'Master';
+    else if (newLevel >= 30) newTitle = 'Expert';
+    else if (newLevel >= 20) newTitle = 'Adept';
+    else if (newLevel >= 10) newTitle = 'Apprentice';
+
+    // Update character
+    await pool.query(
+      'UPDATE characters SET xp = ?, level = ?, title = ? WHERE user_id = ?',
+      [newXP, newLevel, newTitle, userId]
+    );
+
+    // Get updated character
+    const [updatedCharacters] = await pool.query<RowDataPacket[]>(
+      'SELECT * FROM characters WHERE user_id = ?',
+      [userId]
+    );
 
     res.json({
       success: true,
-      data: character,
+      data: updatedCharacters[0],
     });
   } catch (error: any) {
     res.status(500).json({

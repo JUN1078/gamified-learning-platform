@@ -11,7 +11,7 @@ export const getNotifications = async (req: Request, res: Response) => {
     let query = 'SELECT * FROM notifications WHERE user_id = ?';
     const params: any[] = [userId];
 
-    if (unread_only === 'true' || unread_only === true) {
+    if (unread_only === 'true' || unread_only === 'true' || String(unread_only) === 'true') {
       query += ' AND is_read = false';
     }
 

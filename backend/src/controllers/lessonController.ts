@@ -195,6 +195,14 @@ export const submitAnswers = async (req: Request, res: Response) => {
     const userId = req.user?.userId;
     const { lessonId, answers, timeSpent } = req.body;
 
+    if (!userId) {
+      await connection.rollback();
+      return res.status(401).json({
+        success: false,
+        message: 'User not authenticated'
+      });
+    }
+
     // Get lesson and questions
     const [lessons] = await connection.query<RowDataPacket[]>(
       'SELECT * FROM lessons WHERE id = ?',
