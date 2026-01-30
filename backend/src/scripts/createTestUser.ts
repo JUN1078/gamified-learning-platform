@@ -80,13 +80,13 @@ const createTestUser = async () => {
     const userId = result.insertId;
     console.log('✅ User created with ID:', userId);
 
-    // Create character for user
+    // Create character for user (defaults: level=1, xp=0, all attributes=5.0)
     console.log('🎮 Creating character for user...');
     await connection.query(
-      'INSERT INTO characters (user_id, level, experience, coins) VALUES (?, 1, 0, 100)',
+      'INSERT INTO characters (user_id) VALUES (?)',
       [userId]
     );
-    console.log('✅ Character created');
+    console.log('✅ Character created with default values');
 
     console.log('\n🎉 Test user created successfully!\n');
     console.log('═══════════════════════════════════════');
