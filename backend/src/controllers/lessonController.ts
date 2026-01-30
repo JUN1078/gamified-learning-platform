@@ -358,7 +358,7 @@ export const submitAnswers = async (req: Request, res: Response) => {
 // Helper function to update mission progress
 async function updateMissionProgress(connection: any, userId: number, targetType: string, incrementValue: number) {
   // Get active missions with this target type
-  const [missions] = await connection.query<RowDataPacket[]>(
+  const [missions] = await connection.query(
     `SELECT m.*, mo.id as objective_id, mo.target_value, mo.target_type
      FROM missions m
      JOIN mission_objectives mo ON m.id = mo.mission_id
@@ -366,9 +366,9 @@ async function updateMissionProgress(connection: any, userId: number, targetType
     [targetType]
   );
 
-  for (const mission of missions) {
+  for (const mission of (missions as any[])) {
     // Check if user has active mission progress
-    const [userProgress] = await connection.query<RowDataPacket[]>(
+    const [userProgress] = await connection.query(
       `SELECT * FROM user_mission_progress
        WHERE user_id = ? AND mission_id = ? AND status = 'active'`,
       [userId, mission.id]
