@@ -38,16 +38,28 @@ const createTestUser = async () => {
       const userId = existingUsers[0].id;
 
       // Delete related records first (foreign key constraints)
-      await connection.query('DELETE FROM characters WHERE user_id = ?', [userId]);
-      await connection.query('DELETE FROM user_mountain_progress WHERE user_id = ?', [userId]);
-      await connection.query('DELETE FROM user_badges WHERE user_id = ?', [userId]);
-      await connection.query('DELETE FROM quest_progress WHERE user_id = ?', [userId]);
-      await connection.query('DELETE FROM lesson_progress WHERE user_id = ?', [userId]);
-      await connection.query('DELETE FROM mission_progress WHERE user_id = ?', [userId]);
-      await connection.query('DELETE FROM posts WHERE user_id = ?', [userId]);
-      await connection.query('DELETE FROM comments WHERE user_id = ?', [userId]);
-      await connection.query('DELETE FROM reward_redemptions WHERE user_id = ?', [userId]);
-      await connection.query('DELETE FROM notifications WHERE user_id = ?', [userId]);
+      // Use try-catch for each table in case it doesn't exist yet
+      const tables = [
+        'characters',
+        'user_mountain_progress',
+        'user_badges',
+        'quest_progress',
+        'user_lesson_progress',
+        'user_mission_progress',
+        'posts',
+        'comments',
+        'reward_redemptions',
+        'notifications'
+      ];
+
+      for (const table of tables) {
+        try {
+          await connection.query(`DELETE FROM ${table} WHERE user_id = ?`, [userId]);
+        } catch (error) {
+          // Table might not exist yet, that's okay
+          console.log(`  ⚠️  Table ${table} not found, skipping...`);
+        }
+      }
 
       // Delete the user
       await connection.query('DELETE FROM users WHERE id = ?', [userId]);
