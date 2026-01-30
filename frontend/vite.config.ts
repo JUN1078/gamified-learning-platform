@@ -33,6 +33,11 @@ export default defineConfig(() => {
     preview: {
       host: '0.0.0.0',
       port: port,
+      strictPort: true,
+      allowedHosts: [
+        'gamified-learning-platform-production.up.railway.app',
+        '.railway.app', // Allow all Railway subdomains
+      ],
     },
   }
 })
