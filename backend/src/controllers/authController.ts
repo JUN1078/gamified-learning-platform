@@ -97,9 +97,11 @@ export const register = async (req: AuthRequest, res: Response) => {
 export const login = async (req: AuthRequest, res: Response) => {
   try {
     const { email, password } = req.body;
+    console.log('🔐 Login attempt for:', email);
 
     // Validate input
     if (!email || !password) {
+      console.log('❌ Missing email or password');
       return res.status(400).json({
         success: false,
         error: 'Please provide email and password',
@@ -107,12 +109,15 @@ export const login = async (req: AuthRequest, res: Response) => {
     }
 
     // Find user
+    console.log('🔍 Looking up user in database...');
     const [users] = await pool.query<RowDataPacket[]>(
       'SELECT id, email, username, password, created_at, updated_at FROM users WHERE email = ?',
       [email]
     );
 
+    console.log('👤 Found users:', users.length);
     if (users.length === 0) {
+      console.log('❌ User not found');
       return res.status(401).json({
         success: false,
         error: 'Invalid credentials',
@@ -120,15 +125,22 @@ export const login = async (req: AuthRequest, res: Response) => {
     }
 
     const user = users[0];
+    console.log('✅ User found:', user.email, 'ID:', user.id);
 
     // Check password
+    console.log('🔒 Checking password...');
     const isMatch = await bcrypt.compare(password, user.password);
+    console.log('🔑 Password match:', isMatch);
+
     if (!isMatch) {
+      console.log('❌ Password does not match');
       return res.status(401).json({
         success: false,
         error: 'Invalid credentials',
       });
     }
+
+    console.log('✅ Login successful!');
 
     // Generate token
     const token = generateToken(user.id.toString());
