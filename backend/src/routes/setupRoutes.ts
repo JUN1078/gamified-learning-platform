@@ -6,9 +6,9 @@ const router = express.Router();
 const execAsync = promisify(exec);
 
 // @desc    Initialize database (ONE-TIME USE ONLY)
-// @route   POST /api/setup/init-database
+// @route   GET /api/setup/init-database
 // @access  Public (should be removed after use)
-router.post('/init-database', async (req, res) => {
+router.get('/init-database', async (_req, res) => {
   try {
     console.log('🔧 Starting database initialization...');
 
