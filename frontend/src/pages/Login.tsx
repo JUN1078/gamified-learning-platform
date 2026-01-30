@@ -39,6 +39,16 @@ const Login = () => {
     }
   };
 
+  const useDemoAccount = () => {
+    setEmail('test@learnhub.com');
+    setPassword('test123');
+    addToast({
+      type: 'info',
+      title: 'Demo credentials loaded',
+      message: 'Click Login to continue with test account',
+    });
+  };
+
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
       <div className="space-y-4">
@@ -79,6 +89,15 @@ const Login = () => {
       <Button type="submit" variant="primary" className="w-full" isLoading={isLoading}>
         Login
       </Button>
+
+      {/* Demo Account Button */}
+      <button
+        type="button"
+        onClick={useDemoAccount}
+        className="w-full py-2 text-sm text-white/60 hover:text-accent-gold transition-colors underline"
+      >
+        Use Demo Account (test@learnhub.com)
+      </button>
 
       {/* Register link */}
       <p className="text-center text-sm text-white/70">
