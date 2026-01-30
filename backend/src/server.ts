@@ -23,6 +23,7 @@ import missionRoutes from './routes/missionRoutes.js';
 import socialRoutes from './routes/socialRoutes.js';
 import rewardRoutes from './routes/rewardRoutes.js';
 import notificationRoutes from './routes/notificationRoutes.js';
+import setupRoutes from './routes/setupRoutes.js';
 
 // Import middleware
 import { errorHandler } from './middleware/errorHandler.js';
@@ -72,6 +73,7 @@ app.use(express.urlencoded({ extended: true }));
 /* =========================
    ROUTES
 ========================= */
+app.use('/api/setup', setupRoutes); // ONE-TIME DATABASE SETUP - REMOVE AFTER USE
 app.use('/api/auth', authRoutes);
 app.use('/api/character', characterRoutes);
 app.use('/api/mountains', mountainRoutes);
