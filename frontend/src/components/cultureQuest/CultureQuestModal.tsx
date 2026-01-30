@@ -1,8 +1,6 @@
-import { useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, Sparkles } from 'lucide-react';
 import { useCultureQuestStore } from '@/stores/cultureQuestStore';
-import { useCultureQuestService } from '@/services/cultureQuestService';
 import { useUIStore } from '@/stores/uiStore';
 import ScenarioChoice from './ScenarioChoice';
 import EmotionCheckIn from './EmotionCheckIn';

@@ -303,3 +303,44 @@ export const BADGE_TIER_REQUIREMENTS = {
   silver: { min: 4, max: 7 },
   gold: { min: 8, max: Infinity },
 };
+
+// ============================================================================
+// Culture Quest Types
+// ============================================================================
+
+export interface CultureScenario {
+  id: string;
+  type: 'scenario' | 'emotion' | 'value_tradeoff';
+  title: string;
+  description: string;
+  context?: string;
+  options?: string[];
+  metadata?: Record<string, any>;
+}
+
+export interface CultureResponse {
+  scenarioId: string;
+  response: string;
+  emotionalState?: string;
+  selectedOption?: number;
+}
+
+export interface UserCultureScore {
+  userId: string;
+  cultureDimensions: Record<string, number>;
+  totalResponses: number;
+  lastUpdated: string;
+}
+
+export interface RadarDataPoint {
+  dimension: string;
+  value: number;
+  label: string;
+}
+
+export interface CultureQuestReward {
+  xpGained: number;
+  newLevel?: number;
+  message: string;
+  cultureImpact?: Record<string, number>;
+}
