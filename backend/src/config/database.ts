@@ -9,11 +9,18 @@ let poolConfig: any;
 if (process.env.DATABASE_URL) {
   // Parse the DATABASE_URL
   const dbUrl = new URL(process.env.DATABASE_URL);
+  console.log('🔧 Parsing DATABASE_URL:');
+  console.log('  Host:', dbUrl.hostname);
+  console.log('  Port:', dbUrl.port || 3306);
+  console.log('  User:', dbUrl.username);
+  console.log('  Database:', dbUrl.pathname.slice(1));
+  console.log('  Password length:', dbUrl.password?.length || 0);
+
   poolConfig = {
     host: dbUrl.hostname,
     port: parseInt(dbUrl.port) || 3306,
     user: dbUrl.username,
-    password: dbUrl.password,
+    password: decodeURIComponent(dbUrl.password), // Decode URL-encoded password
     database: dbUrl.pathname.slice(1), // Remove leading '/'
     waitForConnections: true,
     connectionLimit: 10,
