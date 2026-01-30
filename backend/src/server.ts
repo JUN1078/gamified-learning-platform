@@ -28,20 +28,50 @@ import notificationRoutes from './routes/notificationRoutes.js';
 import { errorHandler } from './middleware/errorHandler.js';
 
 const app: Application = express();
-const PORT = process.env.PORT || 5000;
 
-// Middleware
+/* =========================
+   PORT (Railway-safe)
+========================= */
+const PORT = process.env.PORT;
+
+if (!PORT) {
+  throw new Error('PORT environment variable is missing');
+}
+
+/* =========================
+   CORS CONFIG
+========================= */
+const allowedOrigins =
+  process.env.CORS_ORIGIN?.split(',').map(o => o.trim()) || [];
+
+app.use(
+  cors({
+    origin: (origin, callback) => {
+      // Allow server-to-server / health checks
+      if (!origin) return callback(null, true);
+
+      if (allowedOrigins.includes(origin)) {
+        return callback(null, true);
+      }
+
+      return callback(new Error(`CORS blocked: ${origin}`));
+    },
+    credentials: true,
+  })
+);
+
+/* =========================
+   MIDDLEWARE
+========================= */
 app.use(helmet());
-app.use(cors({
-  origin: process.env.CORS_ORIGIN || 'http://localhost:3000',
-  credentials: true,
-}));
 app.use(compression());
 app.use(morgan('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// Routes
+/* =========================
+   ROUTES
+========================= */
 app.use('/api/auth', authRoutes);
 app.use('/api/character', characterRoutes);
 app.use('/api/mountains', mountainRoutes);
@@ -54,22 +84,37 @@ app.use('/api/social', socialRoutes);
 app.use('/api/rewards', rewardRoutes);
 app.use('/api/notifications', notificationRoutes);
 
-// Health check
-app.get('/health', (req, res) => {
-  res.json({ status: 'ok', timestamp: new Date().toISOString() });
+/* =========================
+   HEALTH CHECK
+========================= */
+app.get('/health', (_req, res) => {
+  res.json({
+    status: 'ok',
+    timestamp: new Date().toISOString(),
+  });
 });
 
-// Error handling
+/* =========================
+   ERROR HANDLER
+========================= */
 app.use(errorHandler);
 
-// Start server
+/* =========================
+   START SERVER
+========================= */
 const startServer = async () => {
-  await connectDB();
-  app.listen(PORT, () => {
-    console.log(`🚀 Server running on port ${PORT}`);
-    console.log(`📍 Environment: ${process.env.NODE_ENV || 'development'}`);
-    console.log(`🌐 CORS enabled for: ${process.env.CORS_ORIGIN || 'http://localhost:3000'}`);
-  });
+  try {
+    await connectDB();
+
+    app.listen(Number(PORT), '0.0.0.0', () => {
+      console.log(`🚀 Server running on port ${PORT}`);
+      console.log(`📍 Environment: ${process.env.NODE_ENV || 'development'}`);
+      console.log(`🌐 Allowed CORS origins: ${allowedOrigins.join(', ')}`);
+    });
+  } catch (error) {
+    console.error('❌ Failed to start server:', error);
+    process.exit(1);
+  }
 };
 
 startServer();
