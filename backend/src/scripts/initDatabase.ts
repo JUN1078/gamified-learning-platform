@@ -6,15 +6,17 @@ dotenv.config();
 const initDatabase = async () => {
   try {
     // Connect without specifying database
+    // Support both Railway variables (MYSQL*) and local variables (DB_*)
     const connection = await mysql.createConnection({
-      host: process.env.DB_HOST || 'localhost',
-      user: process.env.DB_USER || 'root',
-      password: process.env.DB_PASSWORD || '',
+      host: process.env.MYSQLHOST || process.env.DB_HOST || 'localhost',
+      port: parseInt(process.env.MYSQLPORT || process.env.DB_PORT || '3306'),
+      user: process.env.MYSQLUSER || process.env.DB_USER || 'root',
+      password: process.env.MYSQLPASSWORD || process.env.DB_PASSWORD || '',
     });
 
     console.log('🔗 Connected to MySQL server');
 
-    const dbName = process.env.DB_NAME || 'learnhub_gamification';
+    const dbName = process.env.MYSQLDATABASE || process.env.DB_NAME || 'railway';
 
     // Create database if not exists
     await connection.query(`CREATE DATABASE IF NOT EXISTS ${dbName}`);
