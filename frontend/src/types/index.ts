@@ -320,9 +320,11 @@ export interface CultureScenario {
 
 export interface CultureResponse {
   scenarioId: string;
-  response: string;
+  response?: string;
   emotionalState?: string;
   selectedOption?: number;
+  optionId?: string | number;
+  contextData?: Record<string, any>;
 }
 
 export interface UserCultureScore {
@@ -334,12 +336,19 @@ export interface UserCultureScore {
 
 export interface RadarDataPoint {
   dimension: string;
+  dimensionId: string;
   value: number;
+  userScore: number;
+  cohortAvg: number;
   label: string;
+  responseCount: number;
+  maxValue?: number;
+  color?: string;
 }
 
 export interface CultureQuestReward {
   xpGained: number;
+  xpEarned: number; // Alias for compatibility
   newLevel?: number;
   message: string;
   cultureImpact?: Record<string, number>;
