@@ -305,51 +305,7 @@ export const BADGE_TIER_REQUIREMENTS = {
 };
 
 // ============================================================================
-// Culture Quest Types
+// Culture Quest Types - Re-export from cultureQuest.ts
 // ============================================================================
 
-export interface CultureScenario {
-  id: string;
-  type: 'scenario' | 'emotion' | 'value_tradeoff';
-  title: string;
-  description: string;
-  context?: string;
-  options?: string[];
-  metadata?: Record<string, any>;
-}
-
-export interface CultureResponse {
-  scenarioId: string;
-  response?: string;
-  emotionalState?: string;
-  selectedOption?: number;
-  optionId?: string | number;
-  contextData?: Record<string, any>;
-}
-
-export interface UserCultureScore {
-  userId: string;
-  cultureDimensions: Record<string, number>;
-  totalResponses: number;
-  lastUpdated: string;
-}
-
-export interface RadarDataPoint {
-  dimension: string;
-  dimensionId: string;
-  value: number;
-  userScore: number;
-  cohortAvg: number;
-  label: string;
-  responseCount: number;
-  maxValue?: number;
-  color?: string;
-}
-
-export interface CultureQuestReward {
-  xpGained: number;
-  xpEarned: number; // Alias for compatibility
-  newLevel?: number;
-  message: string;
-  cultureImpact?: Record<string, number>;
-}
+export * from './cultureQuest';
