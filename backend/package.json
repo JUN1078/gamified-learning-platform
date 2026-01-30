@@ -11,7 +11,8 @@
     "lint": "eslint . --ext .ts",
     "db:init": "tsx src/scripts/initDatabase.ts",
     "db:add-culture-quest": "tsx src/scripts/addCultureQuest.ts",
-    "db:add-levio": "tsx src/scripts/addLevioFeatures.ts"
+    "db:add-levio": "tsx src/scripts/addLevioFeatures.ts",
+    "db:create-test-user": "tsx src/scripts/createTestUser.ts"
   },
   "dependencies": {
     "express": "^4.18.2",
