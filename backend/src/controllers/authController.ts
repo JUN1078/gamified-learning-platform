@@ -1,6 +1,6 @@
 import { Response } from 'express';
 import bcrypt from 'bcryptjs';
-import pool from '../config/database.js';
+import { pool } from '../config/database.js';
 import { generateToken } from '../utils/jwt.js';
 import { AuthRequest } from '../middleware/auth.js';
 import { RowDataPacket, ResultSetHeader } from 'mysql2';

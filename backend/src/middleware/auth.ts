@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
 import jwt from 'jsonwebtoken';
-import pool from '../config/database.js';
+import { pool } from '../config/database.js';
 import { RowDataPacket } from 'mysql2';
 
 export interface AuthRequest extends Request {
