@@ -10,6 +10,7 @@ import {
   ChevronLeft,
   ChevronRight,
   Sparkles,
+  Users,
 } from 'lucide-react';
 import { cn } from '@/utils/helpers';
 
@@ -19,6 +20,7 @@ const navigation = [
   { name: 'Expedition', to: '/expedition', icon: Mountain },
   { name: 'Cards', to: '/cards', icon: CreditCard },
   { name: 'Badges', to: '/badges', icon: Award },
+  { name: 'Peer Review', to: '/peer-review', icon: Users },
   { name: 'Profile', to: '/profile', icon: UserCircle },
 ];
 

@@ -1,4 +1,4 @@
-import { ReactNode } from 'react';
+import { ReactNode, CSSProperties } from 'react';
 import { cn } from '@/utils/helpers';
 
 interface CardProps {
@@ -6,9 +6,10 @@ interface CardProps {
   className?: string;
   interactive?: boolean;
   onClick?: () => void;
+  style?: CSSProperties;
 }
 
-const Card = ({ children, className, interactive = false, onClick }: CardProps) => {
+const Card = ({ children, className, interactive = false, onClick, style }: CardProps) => {
   return (
     <div
       className={cn(
@@ -18,6 +19,7 @@ const Card = ({ children, className, interactive = false, onClick }: CardProps) 
       onClick={onClick}
       role={interactive ? 'button' : undefined}
       tabIndex={interactive ? 0 : undefined}
+      style={style}
     >
       {children}
     </div>

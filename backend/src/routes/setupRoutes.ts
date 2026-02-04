@@ -47,4 +47,36 @@ router.get('/init-database', async (_req, res) => {
   }
 });
 
+// @desc    Add ARISE Peer Review System (ONE-TIME USE ONLY)
+// @route   GET /api/setup/add-peer-review
+// @access  Public (should be removed after use)
+router.get('/add-peer-review', async (_req, res) => {
+  try {
+    console.log('🔧 Starting ARISE Peer Review System migration...');
+
+    // Run peer review migration script
+    await execAsync('npx tsx src/scripts/addPeerReviewSystem.ts');
+    console.log('✅ Peer Review System tables and data added');
+
+    res.json({
+      success: true,
+      message: 'ARISE Peer Review System added successfully!',
+      data: {
+        tables_created: 9,
+        dimensions: 5,
+        statements: 25,
+        badges: 11,
+      }
+    });
+  } catch (error: any) {
+    console.error('❌ Peer Review System migration error:', error);
+    res.status(500).json({
+      success: false,
+      error: error.message,
+      stdout: error.stdout,
+      stderr: error.stderr
+    });
+  }
+});
+
 export default router;

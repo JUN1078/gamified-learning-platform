@@ -23,6 +23,7 @@ import missionRoutes from './routes/missionRoutes.js';
 import socialRoutes from './routes/socialRoutes.js';
 import rewardRoutes from './routes/rewardRoutes.js';
 import notificationRoutes from './routes/notificationRoutes.js';
+import peerReviewRoutes from './routes/peerReviewRoutes.js';
 import setupRoutes from './routes/setupRoutes.js';
 import debugRoutes from './routes/debugRoutes.js';
 
@@ -87,6 +88,7 @@ app.use('/api/missions', missionRoutes);
 app.use('/api/social', socialRoutes);
 app.use('/api/rewards', rewardRoutes);
 app.use('/api/notifications', notificationRoutes);
+app.use('/api/peer-review', peerReviewRoutes);
 
 /* =========================
    HEALTH CHECK

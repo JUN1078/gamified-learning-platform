@@ -193,6 +193,150 @@ export interface ReviewRequest {
 }
 
 // ============================================================================
+// ARISE Peer Review System
+// ============================================================================
+
+export type AriseDimensionId = 'aggressive' | 'respect' | 'innovative' | 'empowered' | 'swift';
+
+export interface AriseDimension {
+  id: number;
+  code: AriseDimensionId;
+  name: string;
+  description: string;
+  icon: string;
+  color: string;
+  mountainId: MountainId;
+}
+
+export interface AriseStatement {
+  id: number;
+  dimensionId: number;
+  statementText: string;
+  order: number;
+}
+
+export interface ArisePeerReview {
+  id: number;
+  reviewerId: string;
+  revieweeId: string;
+  overallComment: string | null;
+  submittedAt: string;
+  reviewer?: {
+    username: string;
+    email: string;
+  };
+  reviewee?: {
+    username: string;
+    email: string;
+  };
+}
+
+export interface PeerReviewRating {
+  id: number;
+  reviewId: number;
+  statementId: number;
+  rating: number;
+}
+
+export interface UserAriseScore {
+  id: number;
+  userId: string;
+  dimensionId: number;
+  averageScore: number;
+  totalReviews: number;
+  lastUpdated: string;
+}
+
+export interface AriseBadge {
+  id: number;
+  code: string;
+  name: string;
+  description: string;
+  icon: string;
+  category: 'reviewer' | 'dimension_master' | 'special';
+  triggerType: 'review_count' | 'dimension_score' | 'all_dimensions';
+  triggerValue: number | null;
+  dimensionId: number | null;
+}
+
+export interface UserAriseBadge {
+  id: number;
+  userId: string;
+  badgeId: number;
+  earnedAt: string;
+  badge?: AriseBadge;
+}
+
+export interface AriseLearningModule {
+  id: number;
+  dimensionId: number;
+  title: string;
+  contentType: 'flashcard' | 'do_dont' | 'quiz';
+  content: any;
+  order: number;
+}
+
+export interface UserLearningProgress {
+  id: number;
+  userId: string;
+  moduleId: number;
+  completedAt: string | null;
+}
+
+// DTO Types for API
+export interface EmployeeListItem {
+  userId: string;
+  username: string;
+  email: string;
+  avatar: string | null;
+  hasReviewed: boolean;
+  lastReviewDate: string | null;
+}
+
+export interface SubmitPeerReviewRequest {
+  revieweeId: string;
+  ratings: {
+    statementId: number;
+    rating: number;
+  }[];
+  overallComment?: string;
+}
+
+export interface AriseRadarData {
+  dimensionScores: {
+    dimension: string;
+    score: number;
+    color: string;
+  }[];
+  totalReviews: number;
+  badges: AriseBadge[];
+}
+
+export interface ReviewJourney {
+  reviews: {
+    reviewId: number;
+    reviewerName: string;
+    submittedAt: string;
+    dimensionScores: {
+      dimension: string;
+      score: number;
+    }[];
+  }[];
+  scoreHistory: {
+    date: string;
+    aggressive: number;
+    respect: number;
+    innovative: number;
+    empowered: number;
+    swift: number;
+  }[];
+}
+
+export interface DimensionWithStatements extends AriseDimension {
+  statements: AriseStatement[];
+}
+
+// ============================================================================
 // Learning Module System
 // ============================================================================
 

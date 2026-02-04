@@ -16,6 +16,10 @@ import Badges from './pages/Badges';
 import Profile from './pages/Profile';
 import Login from './pages/Login';
 import Register from './pages/Register';
+import PeerReview from './pages/PeerReview';
+import ReviewForm from './pages/ReviewForm';
+import ReviewResults from './pages/ReviewResults';
+import ReviewJourney from './pages/ReviewJourney';
 
 // Components
 import ProtectedRoute from './components/shared/ProtectedRoute';
@@ -83,6 +87,10 @@ function App() {
           <Route path="/cards" element={<Cards />} />
           <Route path="/badges" element={<Badges />} />
           <Route path="/profile" element={<Profile />} />
+          <Route path="/peer-review" element={<PeerReview />} />
+          <Route path="/peer-review/form" element={<ReviewForm />} />
+          <Route path="/peer-review/results" element={<ReviewResults />} />
+          <Route path="/peer-review/journey" element={<ReviewJourney />} />
         </Route>
 
         {/* Catch all */}
